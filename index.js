@@ -4,7 +4,8 @@
 
 var PromiseA = require('bluebird');
 var dns = PromiseA.promisifyAll(require('dns'));
-var DDNS = require('ddns-cli');
+var DDNS = require('/Users/aj/Dropbox/Code/ddns-cli');
+//var DDNS = require('ddns-cli');
 var fs = require('fs');
 var path = require('path');
 
@@ -73,22 +74,34 @@ Challenge.create = function (options) {
 // if you need access to them.
 //
 Challenge.set = function (args, domain, challenge, keyAuthorization, done) {
+  var me = this;
   // Note: keyAuthorization is not used for dns-01
 
-  this._memstore.set(domain, {
+  me._memstore.set(domain, {
     email: args.email
   , refreshToken: args.refreshToken
-  }, function () {
+  }, function (err) {
+    if (err) { done(err); return; }
 
-    return DDNS.run({
+    var challengeDomain = args.test + args.acmeChallengeDns + domain;
+
+    return DDNS.update({
       email: args.email
     , refreshToken: args.refreshToken
 
-    , name: args.test + args.acmeChallengeDns + '.' + domain
+    , name: challengeDomain
     , type: "TXT"
     , value: challenge
     , ttl: 60
-    }).then(function () { done(null); }, done);
+    }, {
+      //debug: true
+    }).then(function () {
+      if (args.debug) {
+        console.log("Test DNS Record:");
+        console.log("dig TXT +noall +answer @ns1.redirect-www.org '" + challengeDomain + "' # " + challenge);
+      }
+      done(null);
+    }, done);
   });
 };
 
@@ -103,51 +116,61 @@ Challenge.get = function (defaults, domain, challenge, done) {
 };
 
 Challenge.remove = function (defaults, domain, challenge, done) {
-  this._memstore.get(domain, function (data) {
-    return DDNS.run({
+  var me = this;
+
+  me._memstore.get(domain, function (err, data) {
+    if (err) { done(err); return; }
+
+    var challengeDomain = defaults.test + defaults.acmeChallengeDns + domain;
+
+    return DDNS.update({
       email: data.email
     , refreshToken: data.refreshToken
 
-    , name: defaults.test + defaults.acmeChallengeDns + '.' + domain
+    , name: challengeDomain
     , type: "TXT"
     , value: challenge
     , ttl: 60
 
     , remove: true
+    }, {
+      //debug: true
     }).then(function () {
 
       done(null);
     }, done).then(function () {
-      this._memstore.remove(domain);
+      me._memstore.destroy(domain);
     });
   });
 };
 
 // same as get, but external
 Challenge.loopback = function (defaults, domain, challenge, done) {
-  var subdomain = defaults.test + defaults.acmeChallengeDns + '.' + domain;
-  dns.resolveAsync(subdomain).then(function () { done(null); }, done);
+  var challengeDomain = defaults.test + defaults.acmeChallengeDns + domain;
+  dns.resolveTxtAsync(challengeDomain).then(function () { done(null); }, done);
 };
 
 Challenge.test = function (args, domain, challenge, keyAuthorization, done) {
+  var me = this;
   // Note: keyAuthorization is not used for dns-01
 
-  args.test = '_test.';
+  args.test = args.test || '_test.';
+  defaults.test = args.test;
 
-  Challenge.set(args, domain, challenge, keyAuthorization, function (err) {
+  me.set(args, domain, challenge, null, function (err) {
     if (err) { done(err); return; }
 
-    Challenge.loopback(defaults, domain, challenge, function (err) {
+    me.loopback(defaults, domain, challenge, function (err) {
       if (err) { done(err); return; }
 
-      Challenge.remove(defaults, domain, challenge, function (err) {
+      me.remove(defaults, domain, challenge, function (err) {
         if (err) { done(err); return; }
 
         // TODO needs to use native-dns so that specific nameservers can be used
         // (otherwise the cache will still have the old answer)
         done();
         /*
-        Challenge.loopback(defaults, domain, challenge, function (err) {
+        me.loopback(defaults, domain, challenge, function (err) {
           if (err) { done(err); return; }
 
           done();
