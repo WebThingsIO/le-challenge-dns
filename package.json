@@ -1,0 +1,36 @@
+{
+  "name": "le-challenge-dns",
+  "version": "2.0.0",
+  "description": "A dns-based strategy for node-letsencrypt for setting, retrieving, and clearing ACME DNS-01 challenges issued by the ACME server",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Daplie/le-challenge-dns.git"
+  },
+  "keywords": [
+    "le",
+    "letsencrypt",
+    "le-challenge",
+    "le-challenge-",
+    "le-challenge-dns",
+    "acme",
+    "challenge",
+    "dns",
+    "cluster",
+    "ephemeral"
+  ],
+  "author": "AJ ONeal <coolaj86@gmail.com> (https://coolaj86.com/)",
+  "license": "(MIT OR Apache-2.0)",
+  "bugs": {
+    "url": "https://github.com/Daplie/le-challenge-dns/issues"
+  },
+  "homepage": "https://github.com/Daplie/le-challenge-dns#readme",
+  "dependencies": {
+    "daplie-dns": "git+https://github.com/Daplie/daplie-cli-dns.git#master",
+    "daplie-domains": "git+https://github.com/Daplie/daplie-cli-domains.git#master",
+    "oauth3-cli": "git+https://github.com/OAuth3/oauth3-cli.git#master"
+  }
+}
