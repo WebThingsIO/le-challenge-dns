@@ -32,6 +32,7 @@
     "cluster-store": "^2.0.4",
     "daplie-dns": "git+https://github.com/Daplie/daplie-cli-dns.git#master",
     "daplie-domains": "git+https://github.com/Daplie/daplie-cli-domains.git#master",
+    "ddns-cli": "git+https://github.com/Daplie/node-ddns-client.git#master",
     "oauth3-cli": "git+https://github.com/OAuth3/oauth3-cli.git#master"
   }
 }

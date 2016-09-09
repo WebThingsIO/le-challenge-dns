@@ -4,8 +4,7 @@
 
 var PromiseA = require('bluebird');
 var dns = PromiseA.promisifyAll(require('dns'));
-var DDNS = require('/Users/aj/Code/ddns-cli');
-//var DDNS = require('ddns-cli');
+var DDNS = require('ddns-cli');
 var fs = require('fs');
 var path = require('path');
 
