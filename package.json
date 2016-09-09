@@ -1,6 +1,6 @@
 {
   "name": "le-challenge-dns",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A dns-based strategy for node-letsencrypt for setting, retrieving, and clearing ACME DNS-01 challenges issued by the ACME server",
   "main": "index.js",
   "scripts": {
