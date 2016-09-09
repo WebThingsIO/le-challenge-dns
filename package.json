@@ -29,9 +29,9 @@
   },
   "homepage": "https://github.com/Daplie/le-challenge-dns#readme",
   "dependencies": {
+    "cluster-store": "^2.0.4",
     "daplie-dns": "git+https://github.com/Daplie/daplie-cli-dns.git#master",
     "daplie-domains": "git+https://github.com/Daplie/daplie-cli-domains.git#master",
-    "memstore-cluster": "^1.0.0",
     "oauth3-cli": "git+https://github.com/OAuth3/oauth3-cli.git#master"
   }
 }

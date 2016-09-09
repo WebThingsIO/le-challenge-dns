@@ -11,29 +11,21 @@ var path = require('path');
 
 var cluster = require('cluster');
 var numCores = require('os').cpus().length;
+//var count = 0;
 var defaults = {
   oauth3: 'oauth3.org'
 , debug: false
 , acmeChallengeDns: '_acme-challenge.' // _acme-challenge.example.com TXT xxxxxxxxxxxxxxxx
 , memstoreConfig: {
-    sock: '/tmp/memstore.sock'
-
-    // If left 'null' or 'undefined' this defaults to a similar memstore
-    // with no special logic for 'cookie' or 'expires'
-  , store: null
-
-    // a good default to use for instances where you might want
-    // to cluster or to run standalone, but with the same API
-  , serve: cluster.isMaster
-  , connect: cluster.isWorker
-  , standalone: (1 === numCores) // overrides serve and connect
+    name: 'le-dns'
   }
 };
 
 var Challenge = module.exports;
 
 Challenge.create = function (options) {
-  var store = require('memstore-cluster');
+  // count += 1;
+  var store = require('cluster-store');
   var results = {};
 
   Object.keys(Challenge).forEach(function (key) {
