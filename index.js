@@ -4,8 +4,8 @@
 
 var PromiseA = require('bluebird');
 var dns = PromiseA.promisifyAll(require('dns'));
-//var DDNS = require('/Users/aj/Code/ddns-cli');
-var DDNS = require('ddns-cli');
+var DDNS = require('/Users/aj/Code/ddns-cli');
+//var DDNS = require('ddns-cli');
 var fs = require('fs');
 var path = require('path');
 
@@ -80,6 +80,7 @@ Challenge.set = function (args, domain, challenge, keyAuthorization, done) {
     return DDNS.update({
       email: args.email
     , refreshToken: args.refreshToken
+    , silent: true
 
     , name: challengeDomain
     , type: "TXT"
@@ -118,6 +119,7 @@ Challenge.remove = function (defaults, domain, challenge, done) {
     return DDNS.update({
       email: data.email
     , refreshToken: data.refreshToken
+    , silent: true
 
     , name: challengeDomain
     , type: "TXT"
