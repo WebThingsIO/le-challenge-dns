@@ -1,15 +1,12 @@
 'use strict';
 
-// See https://gitlab.com/pushrocks/cert/blob/master/ts/cert.hook.ts
+// See https://tools.ietf.org/html/draft-ietf-acme-acme-01
+// also https://gitlab.com/pushrocks/cert/blob/master/ts/cert.hook.ts
 
 var PromiseA = require('bluebird');
 var dns = PromiseA.promisifyAll(require('dns'));
 var DDNS = require('ddns-cli');
-var fs = require('fs');
-var path = require('path');
 
-var cluster = require('cluster');
-var numCores = require('os').cpus().length;
 //var count = 0;
 var defaults = {
   oauth3: 'oauth3.org'
@@ -66,26 +63,37 @@ Challenge.create = function (options) {
 //
 Challenge.set = function (args, domain, challenge, keyAuthorization, done) {
   var me = this;
-  // Note: keyAuthorization is not used for dns-01
+  // TODO use base64url module
+  var keyAuthDigest = require('crypto').createHash('sha256').update(keyAuthorization||'').digest('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/g, '')
+    ;
 
-  me._memstore.set(domain, {
+  if (!challenge || !keyAuthorization) {
+    console.warn("SANITY FAIL: missing challenge or keyAuthorization", domain, challenge, keyAuthorization);
+  }
+
+  return me._memstore.set(domain, {
     email: args.email
   , refreshToken: args.refreshToken
+  , keyAuthDigest: keyAuthDigest
   }, function (err) {
     if (err) { done(err); return; }
 
-    var challengeDomain = args.test + args.acmeChallengeDns + domain;
-
-    return DDNS.update({
+    var challengeDomain = (args.test || '') + args.acmeChallengeDns + domain;
+    var update = {
       email: args.email
     , refreshToken: args.refreshToken
     , silent: true
 
     , name: challengeDomain
     , type: "TXT"
-    , value: challenge
-    , ttl: 60
-    }, {
+    , value: keyAuthDigest || challenge
+    , ttl: args.ttl || 0
+    };
+
+    return DDNS.update(update, {
       //debug: true
     }).then(function () {
       if (args.debug) {
@@ -93,7 +101,11 @@ Challenge.set = function (args, domain, challenge, keyAuthorization, done) {
         console.log("dig TXT +noall +answer @ns1.redirect-www.org '" + challengeDomain + "' # " + challenge);
       }
       done(null);
-    }, done);
+    }, function (err) {
+      console.error(err);
+      done(err);
+      return PromiseA.reject(err);
+    });
   });
 };
 
@@ -104,16 +116,17 @@ Challenge.set = function (args, domain, challenge, keyAuthorization, done) {
 // based on domain and key
 //
 Challenge.get = function (defaults, domain, challenge, done) {
+  done = null; // nix linter error for unused vars
   throw new Error("Challenge.get() does not need an implementation for dns-01. (did you mean Challenge.loopback?)");
 };
 
 Challenge.remove = function (defaults, domain, challenge, done) {
   var me = this;
 
-  me._memstore.get(domain, function (err, data) {
+  return me._memstore.get(domain, function (err, data) {
     if (err) { done(err); return; }
 
-    var challengeDomain = defaults.test + defaults.acmeChallengeDns + domain;
+    var challengeDomain = (defaults.test || '') + defaults.acmeChallengeDns + domain;
 
     return DDNS.update({
       email: data.email
@@ -122,8 +135,8 @@ Challenge.remove = function (defaults, domain, challenge, done) {
 
     , name: challengeDomain
     , type: "TXT"
-    , value: challenge
-    , ttl: 60
+    , value: data.keyAuthDigest || challenge
+    , ttl: defaults.ttl || 0
 
     , remove: true
     }, {
@@ -139,18 +152,17 @@ Challenge.remove = function (defaults, domain, challenge, done) {
 
 // same as get, but external
 Challenge.loopback = function (defaults, domain, challenge, done) {
-  var challengeDomain = defaults.test + defaults.acmeChallengeDns + domain;
+  var challengeDomain = (defaults.test || '') + defaults.acmeChallengeDns + domain;
   dns.resolveTxtAsync(challengeDomain).then(function () { done(null); }, done);
 };
 
 Challenge.test = function (args, domain, challenge, keyAuthorization, done) {
   var me = this;
-  // Note: keyAuthorization is not used for dns-01
 
   args.test = args.test || '_test.';
   defaults.test = args.test;
 
-  me.set(args, domain, challenge, null, function (err) {
+  me.set(args, domain, challenge, keyAuthorization || challenge, function (err) {
     if (err) { done(err); return; }
 
     me.loopback(defaults, domain, challenge, function (err) {
