@@ -100,7 +100,7 @@ Challenge.set = function (args, domain, challenge, keyAuthorization, done) {
         console.log("Test DNS Record:");
         console.log("dig TXT +noall +answer @ns1.redirect-www.org '" + challengeDomain + "' # " + challenge);
       }
-      done(null);
+      done(null, keyAuthDigest);
     }, function (err) {
       console.error(err);
       done(err);
@@ -125,6 +125,11 @@ Challenge.remove = function (defaults, domain, challenge, done) {
 
   return me._memstore.get(domain, function (err, data) {
     if (err) { done(err); return; }
+    if (!data) {
+      console.warn("[warning] could not remove '" + domain + "': already removed");
+      done(null);
+      return;
+    }
 
     var challengeDomain = (defaults.test || '') + defaults.acmeChallengeDns + domain;
 
@@ -153,7 +158,7 @@ Challenge.remove = function (defaults, domain, challenge, done) {
 // same as get, but external
 Challenge.loopback = function (defaults, domain, challenge, done) {
   var challengeDomain = (defaults.test || '') + defaults.acmeChallengeDns + domain;
-  dns.resolveTxtAsync(challengeDomain).then(function () { done(null); }, done);
+  dns.resolveTxtAsync(challengeDomain).then(function (x) { done(null, x); }, done);
 };
 
 Challenge.test = function (args, domain, challenge, keyAuthorization, done) {
@@ -162,18 +167,26 @@ Challenge.test = function (args, domain, challenge, keyAuthorization, done) {
   args.test = args.test || '_test.';
   defaults.test = args.test;
 
-  me.set(args, domain, challenge, keyAuthorization || challenge, function (err) {
+  me.set(args, domain, challenge, keyAuthorization || challenge, function (err, k) {
     if (err) { done(err); return; }
 
-    me.loopback(defaults, domain, challenge, function (err) {
+    me.loopback(defaults, domain, challenge, function (err, arr) {
       if (err) { done(err); return; }
+
+      if (!arr.some(function (a) {
+        return a.some(function (keyAuthDigest) {
+          return keyAuthDigest === k;
+        });
+      })) {
+        err = new Error("txt record '" + challenge + "' doesn't match '" + k + "'");
+      }
 
       me.remove(defaults, domain, challenge, function (err) {
         if (err) { done(err); return; }
 
         // TODO needs to use native-dns so that specific nameservers can be used
         // (otherwise the cache will still have the old answer)
-        done();
+        done(err || null);
         /*
         me.loopback(defaults, domain, challenge, function (err) {
           if (err) { done(err); return; }
