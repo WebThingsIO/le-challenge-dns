@@ -181,8 +181,8 @@ Challenge.test = function (args, domain, challenge, keyAuthorization, done) {
         err = new Error("txt record '" + challenge + "' doesn't match '" + k + "'");
       }
 
-      me.remove(defaults, domain, challenge, function (err) {
-        if (err) { done(err); return; }
+      me.remove(defaults, domain, challenge, function (_err) {
+        if (_err) { done(_err); return; }
 
         // TODO needs to use native-dns so that specific nameservers can be used
         // (otherwise the cache will still have the old answer)
