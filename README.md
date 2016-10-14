@@ -71,5 +71,5 @@ Note: `get()` is a no-op for `dns-01`.
 For node-letsencrypt internals:
 
 * `getOptions()` returns the internal defaults merged with the user-supplied options
-* `loopback(defaults, domain, challange, keyAuthorization, done)` should test, by external means, that the ACME server's challenge server will succeed
+* `loopback(defaults, domain, challange, done)` performs a dns lookup of the txt record
 * `test(opts, domain, challange, keyAuthorization, done)` runs set, loopback, remove, loopback
