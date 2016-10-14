@@ -10,7 +10,7 @@
 le-challenge-dns
 ================
 
-**For production** use [`le-challenge-ddns`](https://github.com/Daplie/le-challenge-ddns) you want
+**For production** use [`le-challenge-ddns`](https://github.com/Daplie/le-challenge-ddns) (or a similar ddns tool)
 
 A manual (interactive CLI) dns-based strategy for node-letsencrypt for setting, retrieving,
 and clearing ACME DNS-01 challenges issued by the ACME server
