@@ -66,8 +66,7 @@ For ACME Challenge:
 * `get(defaults, domain, challenge, done)`
 * `remove(defaults, domain, challenge, done)`
 
-Note: `get()` is a no-op for `dns-01` and although `dns-01` does not use `keyAuthorization`,
-it must be passed in as `null` to keep the correct method signature.
+Note: `get()` is a no-op for `dns-01`.
 
 For node-letsencrypt internals:
 
