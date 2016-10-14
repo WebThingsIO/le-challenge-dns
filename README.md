@@ -13,7 +13,7 @@ le-challenge-ddns
 A dns-based strategy for node-letsencrypt for setting, retrieving,
 and clearing ACME DNS-01 challenges issued by the ACME server
 
-It creates a subdomain record for `_acme-challenge` wich `challenge`
+It creates a subdomain record for `_acme-challenge` with `keyAuthDigest`
 to be tested by the ACME server.
 
 ```
