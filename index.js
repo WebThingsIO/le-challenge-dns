@@ -13,7 +13,7 @@ var defaults = {
 , debug: false
 , acmeChallengeDns: '_acme-challenge.' // _acme-challenge.example.com TXT xxxxxxxxxxxxxxxx
 , memstoreConfig: {
-    name: 'le-dns'
+    name: 'le-ddns'
   }
 };
 

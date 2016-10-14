@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Daplie/le-challenge-dns.git"
+    "url": "git+https://github.com/Daplie/le-challenge-ddns.git"
   },
   "keywords": [
     "le",
@@ -16,18 +16,20 @@
     "le-challenge",
     "le-challenge-",
     "le-challenge-dns",
+    "le-challenge-ddns",
     "acme",
     "challenge",
     "dns",
+    "ddns",
     "cluster",
     "ephemeral"
   ],
   "author": "AJ ONeal <coolaj86@gmail.com> (https://coolaj86.com/)",
   "license": "(MIT OR Apache-2.0)",
   "bugs": {
-    "url": "https://github.com/Daplie/le-challenge-dns/issues"
+    "url": "https://github.com/Daplie/le-challenge-ddns/issues"
   },
-  "homepage": "https://github.com/Daplie/le-challenge-dns#readme",
+  "homepage": "https://github.com/Daplie/le-challenge-ddns#readme",
   "dependencies": {
     "cluster-store": "^2.0.4",
     "daplie-dns": "git+https://github.com/Daplie/daplie-cli-dns.git#master",
