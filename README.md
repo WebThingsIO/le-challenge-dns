@@ -50,7 +50,7 @@ LE.create({
 , challenges: {
     'dns-01': leChallengeDdns
   }
-, approvedDomains: [ 'example.com' ]
+, approveDomains: [ 'example.com' ]
 });
 ```
 
