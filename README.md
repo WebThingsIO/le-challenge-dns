@@ -7,7 +7,7 @@
 | [letsencrypt-hapi](https://github.com/Daplie/letsencrypt-hapi)
 |
 
-le-challenge-dns
+le-challenge-ddns
 ================
 
 A dns-based strategy for node-letsencrypt for setting, retrieving,
@@ -27,14 +27,14 @@ Install
 -------
 
 ```bash
-npm install --save le-challenge-dns@2.x
+npm install --save le-challenge-ddns@2.x
 ```
 
 Usage
 -----
 
 ```bash
-var leChallengeDns = require('le-challenge-dns').create({
+var leChallengeDdns = require('le-challenge-ddns').create({
   email: 'john.doe@example.com'
 , refreshToken: '...'
 , ttl: 60
@@ -48,7 +48,7 @@ LE.create({
   server: LE.stagingServerUrl                               // Change to LE.productionServerUrl in production
 , challengeType: 'dns-01'
 , challenges: {
-    'dns-01': leChallengeDns
+    'dns-01': leChallengeDdns
   }
 , approvedDomains: [ 'example.com' ]
 });
