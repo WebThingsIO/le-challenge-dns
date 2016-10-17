@@ -15,7 +15,7 @@ var challenge = 'xxx-acme-challenge-xxx';
 var keyAuthorization = 'xxx-acme-challenge-xxx.xxx-acme-authorization-xxx';
 
 setTimeout(function () {
-  leChallengeDns.test(opts, domain, challenge, null, function (err) {
+  leChallengeDns.test(opts, domain, challenge, keyAuthorization, function (err) {
     // if there's an error, there's a problem
     if (err) { throw err; }
 
