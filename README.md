@@ -7,39 +7,37 @@
 | [letsencrypt-hapi](https://github.com/Daplie/letsencrypt-hapi)
 |
 
-le-challenge-ddns
+le-challenge-dns
 ================
 
-A dns-based strategy for node-letsencrypt for setting, retrieving,
+**For production** use [`le-challenge-ddns`](https://github.com/Daplie/le-challenge-ddns) (or a similar ddns tool)
+
+A manual (interactive CLI) dns-based strategy for node-letsencrypt for setting, retrieving,
 and clearing ACME DNS-01 challenges issued by the ACME server
 
-It creates a subdomain record for `_acme-challenge` with `keyAuthDigest`
+Prints out a subdomain record for `_acme-challenge` with `keyAuthDigest`
 to be tested by the ACME server.
+
+You can then update your DNS manually by whichever method you use and then
+press [enter] to continue the process.
 
 ```
 _acme-challenge.example.com   TXT   xxxxxxxxxxxxxxxx    TTL 60
 ```
 
-* Safe to use with node cluster
-* Safe to use with ephemeral services (Heroku, Joyent, etc)
-
 Install
 -------
 
 ```bash
-npm install --save le-challenge-ddns@2.x
+npm install --save le-challenge-dns@2.x
 ```
 
 Usage
 -----
 
 ```bash
-var leChallengeDdns = require('le-challenge-ddns').create({
-  email: 'john.doe@example.com'
-, refreshToken: '...'
-, ttl: 60
-
-, debug: false
+var leChallengeDns = require('le-challenge-dns').create({
+  debug: false
 });
 
 var LE = require('letsencrypt');
@@ -48,7 +46,7 @@ LE.create({
   server: LE.stagingServerUrl                               // Change to LE.productionServerUrl in production
 , challengeType: 'dns-01'
 , challenges: {
-    'dns-01': leChallengeDdns
+    'dns-01': leChallengeDns
   }
 , approveDomains: [ 'example.com' ]
 });
