@@ -1,3 +1,16 @@
+Daplie is Taking Back the Internet!
+--------------
+
+[![](https://daplie.github.com/igg/images/ad-developer-rpi-white-890x275.jpg?v2)](https://daplie.com/preorder/)
+
+Stop serving the empire and join the rebel alliance!
+
+* [Invest in Daplie on Wefunder](https://daplie.com/invest/)
+* [Pre-order Cloud](https://daplie.com/preorder/), The World's First Home Server for Everyone
+
+le-challenge-dns
+================
+
 [![Join the chat at https://gitter.im/Daplie/letsencrypt-express](https://badges.gitter.im/Daplie/letsencrypt-express.svg)](https://gitter.im/Daplie/letsencrypt-express?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 | [letsencrypt](https://github.com/Daplie/node-letsencrypt) (library)
@@ -6,9 +19,6 @@
 | [letsencrypt-koa](https://github.com/Daplie/letsencrypt-koa)
 | [letsencrypt-hapi](https://github.com/Daplie/letsencrypt-hapi)
 |
-
-le-challenge-dns
-================
 
 **For production** use [`le-challenge-ddns`](https://github.com/Daplie/le-challenge-ddns) (or a similar ddns tool)
 
