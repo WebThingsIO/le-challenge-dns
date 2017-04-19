@@ -5,7 +5,7 @@ var dns = PromiseA.promisifyAll(require('dns'));
 var Challenge = module.exports;
 
 Challenge.create = function (defaults) {
-  return  {
+  return {
     getOptions: function () {
       return defaults || {};
     }
@@ -74,3 +74,41 @@ Challenge.loopback = function (defaults, domain, challenge, done) {
   console.log("dig TXT +noall +answer @8.8.8.8 '" + challengeDomain + "' # " + challenge);
   dns.resolveTxtAsync(challengeDomain).then(function (x) { done(null, x); }, done);
 };
+
+Challenge.test = function (args, domain, challenge, keyAuthorization, done) {
+  var me = this;
+
+  args.test = args.test || '_test.';
+  defaults.test = args.test;
+
+  me.set(args, domain, challenge, keyAuthorization || challenge, function (err, k) {
+    if (err) { done(err); return; }
+
+    me.loopback(defaults, domain, challenge, function (err, arr) {
+      if (err) { done(err); return; }
+
+      if (!arr.some(function (a) {
+        return a.some(function (keyAuthDigest) {
+          return keyAuthDigest === k;
+        });
+      })) {
+        err = new Error("txt record '" + challenge + "' doesn't match '" + k + "'");
+      }
+
+      me.remove(defaults, domain, challenge, function (_err) {
+        if (_err) { done(_err); return; }
+
+        // TODO needs to use native-dns so that specific nameservers can be used
+        // (otherwise the cache will still have the old answer)
+        done(err || null);
+        /*
+        me.loopback(defaults, domain, challenge, function (err) {
+          if (err) { done(err); return; }
+
+          done();
+        });
+        */
+      });
+    });
+  });
+}
