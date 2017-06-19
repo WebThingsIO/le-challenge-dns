@@ -4,6 +4,8 @@ var PromiseA = require('bluebird');
 var dns = PromiseA.promisifyAll(require('dns'));
 var Challenge = module.exports;
 
+var leDnsResponse;
+
 Challenge.create = function (defaults) {
   return {
     getOptions: function () {
@@ -24,32 +26,40 @@ Challenge.set = function (args, domain, challenge, keyAuthorization, cb) {
     .replace(/\//g, '_')
     .replace(/=+$/g, '')
     ;
-  var challengeDomain = (args.test || '') + args.acmeChallengeDns + domain;
+  var challengeDomain = domain;
 
-  console.info("");
-  console.info("Challenge for '" + domain + "'");
-  console.info("");
-  console.info("We now present (for you copy-and-paste pleasure) your ACME Challenge");
-  console.info("public Challenge and secret KeyAuthorization and Digest, in that order, respectively:");
-  console.info(challenge);
-  console.info(keyAuthorization);
-  console.info(keyAuthDigest);
-  console.info("");
-  console.info(challengeDomain + "\tTXT " + keyAuthDigest + "\tTTL 60");
-  console.info("");
-  console.info(JSON.stringify({
-    domain: domain
-  , challenge: challenge
-  , keyAuthorization: keyAuthorization
-  , keyAuthDigest: keyAuthDigest
-  }, null, '  ').replace(/^/gm, '\t'));
-  console.info("");
-  console.info("hit enter to continue...");
-  process.stdin.resume();
-  process.stdin.on('data', function () {
-    process.stdin.pause();
-    cb(null);
-  });
+  if (this.leDnsResponse) {
+      this.leDnsResponse(challenge, keyAuthorization, keyAuthDigest, challengeDomain, domain)
+      .then((successMessage) => {
+          console.log("Yay! " + successMessage);
+          cb(null);
+      });
+  } else {
+    console.info("");
+    console.info("Challenge for '" + domain + "'");
+    console.info("");
+    console.info("We now present (for you copy-and-paste pleasure) your ACME Challenge");
+    console.info("public Challenge and secret KeyAuthorization and Digest, in that order, respectively:");
+    console.info(challenge);
+    console.info(keyAuthorization);
+    console.info(keyAuthDigest);
+    console.info("");
+    console.info(challengeDomain + "\tTXT " + keyAuthDigest + "\tTTL 60");
+    console.info("");
+    console.info(JSON.stringify({
+      domain: domain
+    , challenge: challenge
+    , keyAuthorization: keyAuthorization
+    , keyAuthDigest: keyAuthDigest
+    }, null, '  ').replace(/^/gm, '\t'));
+    console.info("");
+    console.info("hit enter to continue...");
+    process.stdin.resume();
+    process.stdin.on('data', function () {
+      process.stdin.pause();
+      cb(null);
+    });
+  }
 };
 
 // nothing to do here, that's why it's manual
