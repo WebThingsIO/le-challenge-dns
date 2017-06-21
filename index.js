@@ -31,7 +31,6 @@ Challenge.set = function (args, domain, challenge, keyAuthorization, cb) {
   if (this.leDnsResponse) {
       this.leDnsResponse(challenge, keyAuthorization, keyAuthDigest, challengeDomain, domain)
       .then((successMessage) => {
-          console.log("Yay! " + successMessage);
           cb(null);
       });
   } else {
@@ -69,12 +68,7 @@ Challenge.get = function (defaults, domain, challenge, cb) {
 
 // might as well tell the user that whatever they were setting up has been checked
 Challenge.remove = function (args, domain, challenge, cb) {
-  console.info("Challenge for '" + domain + "' complete. You may remove it.");
-  console.info("");
-  //console.info("hit enter to continue...");
-  //process.stdin.resume();
-  //process.stdin.on('data', function () {
-  //  process.stdin.pause();
+    console.info("Challenge for '" + domain + "' complete. You may remove it.");
     cb(null);
   //});
 };
